@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/asim/go-micro/v3/registry"
@@ -16,19 +15,15 @@ import (
 )
 
 type nacosRegistry struct {
-	client naming_client.INamingClient
-	opts   registry.Options
-
+	client    naming_client.INamingClient
+	opts      registry.Options
 	namespace string
-
-	sync.RWMutex
-	register map[string]uint64
 }
 
+// NewRegistry NewRegistry
 func NewRegistry(opts ...registry.Option) registry.Registry {
 	n := &nacosRegistry{
-		opts:     registry.Options{},
-		register: make(map[string]uint64),
+		opts: registry.Options{},
 	}
 	configure(n, opts...)
 	return n
@@ -41,14 +36,8 @@ func configure(n *nacosRegistry, opts ...registry.Option) error {
 	}
 
 	if n.opts.Context != nil {
-		if namespace, ok := n.opts.Context.Value("namespace").(string); ok {
+		if namespace, ok := n.opts.Context.Value("nacos_namespace").(string); ok {
 			n.namespace = namespace
-			return nil
-		}
-
-		if client, ok := n.opts.Context.Value("naming_client").(naming_client.INamingClient); ok {
-			n.client = client
-			return nil
 		}
 	}
 
@@ -97,7 +86,7 @@ func configure(n *nacosRegistry, opts ...registry.Option) error {
 	return nil
 }
 
-func getNodeIpPort(s *registry.Service) (host string, port int, err error) {
+func getNodeIPPort(s *registry.Service) (host string, port int, err error) {
 	if len(s.Nodes) == 0 {
 		return "", 0, errors.New("you must deregister at least one node")
 	}
@@ -136,7 +125,7 @@ func (n *nacosRegistry) Register(s *registry.Service, opts ...registry.RegisterO
 		}
 	}
 	if !withContext {
-		host, port, err := getNodeIpPort(s)
+		host, port, err := getNodeIPPort(s)
 		if err != nil {
 			return err
 		}
@@ -168,7 +157,7 @@ func (n *nacosRegistry) Deregister(s *registry.Service, opts ...registry.Deregis
 		}
 	}
 	if !withContext {
-		host, port, err := getNodeIpPort(s)
+		host, port, err := getNodeIPPort(s)
 		if err != nil {
 			return err
 		}
