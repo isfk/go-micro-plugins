@@ -36,7 +36,7 @@ func configure(n *nacosRegistry, opts ...registry.Option) error {
 	}
 
 	if n.opts.Context != nil {
-		if namespace, ok := n.opts.Context.Value("nacos_namespace").(string); ok {
+		if namespace, ok := n.opts.Context.Value(&NacosNamespaceContextKey{}).(string); ok {
 			n.namespace = namespace
 		}
 	}
