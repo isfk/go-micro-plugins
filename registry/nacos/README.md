@@ -3,7 +3,7 @@
 ## 使用说明
 
 ```go
-import "github.com/isfk/go-micro-plugins/registry/nacos"
+import "github.com/isfk/go-micro-plugins/registry/nacos/v3"
 
 registry := nacos.NewRegistry(func(options *registry.Options) {
     options.Addrs = []string{"127.0.0.1:8848"}
