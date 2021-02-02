@@ -8,7 +8,7 @@ import "github.com/isfk/go-micro-plugins/registry/nacos/v3"
 registry := nacos.NewRegistry(func(options *registry.Options) {
     options.Addrs = []string{"127.0.0.1:8848"}
     // 支持 namespace
-    options.Context = context.WithValue(context.Background(), &nacos.NacosContextKey{}, nacosNamespace)
+    options.Context = context.WithValue(context.Background(), &nacos.NacosNamespaceContextKey{}, nacosNamespace)
 })
 service := micro.NewService(
     micro.Name("go.micro.src.demo"),
