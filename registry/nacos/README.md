@@ -9,6 +9,9 @@ registry := nacos.NewRegistry(func(options *registry.Options) {
     options.Addrs = []string{"127.0.0.1:8848"}
     // 支持 namespace
     options.Context = context.WithValue(context.Background(), &nacos.NacosNamespaceContextKey{}, nacosNamespace)
+    // 支持自定义 client log/cache 路径
+    options.Context = context.WithValue(options.Context, &nacos.NacosCacheDirContextKey{}, nacosCacheDir)
+    options.Context = context.WithValue(options.Context, &nacos.NacosLogDirContextKey{}, nacosLogDir)
 })
 service := micro.NewService(
     micro.Name("go.micro.src.demo"),
