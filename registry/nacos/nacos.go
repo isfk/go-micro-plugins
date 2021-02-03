@@ -18,6 +18,8 @@ type nacosRegistry struct {
 	client    naming_client.INamingClient
 	opts      registry.Options
 	namespace string
+	cacheDir  string
+	logDir    string
 }
 
 // NewRegistry NewRegistry
@@ -39,9 +41,18 @@ func configure(n *nacosRegistry, opts ...registry.Option) error {
 		if namespace, ok := n.opts.Context.Value(&NacosNamespaceContextKey{}).(string); ok {
 			n.namespace = namespace
 		}
+		if cacheDir, ok := n.opts.Context.Value(&NacosCacheDirContextKey{}).(string); ok {
+			n.cacheDir = cacheDir
+		}
+		if logDir, ok := n.opts.Context.Value(&NacosLogDirContextKey{}).(string); ok {
+			n.logDir = logDir
+		}
 	}
 
-	clientConfig := constant.ClientConfig{}
+	clientConfig := constant.ClientConfig{
+		CacheDir: n.cacheDir,
+		LogDir:   n.logDir,
+	}
 	serverConfigs := make([]constant.ServerConfig, 0)
 	contextPath := "/nacos"
 
